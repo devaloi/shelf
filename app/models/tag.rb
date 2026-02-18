@@ -8,5 +8,8 @@ class Tag < ApplicationRecord
 
   normalizes :name, with: ->(name) { name.strip.downcase }
 
-  delegate :count, to: :books, prefix: true
+  # Use .size to leverage preloaded associations (avoids N+1 COUNT queries)
+  def books_count
+    books.size
+  end
 end

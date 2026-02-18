@@ -5,8 +5,8 @@ class BookTagsController < ApplicationController
     tag_names = parse_tag_names
     return render_bad_request('No tags provided') if tag_names.empty?
 
-    added_tags = add_tags_to_book(tag_names)
-    render json: tag_response("Added #{added_tags.size} tag(s)"), status: :created
+    add_tags_to_book(tag_names)
+    render json: tag_response, status: :created
   end
 
   def destroy
@@ -14,7 +14,7 @@ class BookTagsController < ApplicationController
     raise ActiveRecord::RecordNotFound, "Couldn't find Tag on this book" unless tag
 
     @book.tags.delete(tag)
-    render json: tag_response('Tag removed from book')
+    render json: tag_response
   end
 
   private
@@ -37,10 +37,7 @@ class BookTagsController < ApplicationController
     end
   end
 
-  def tag_response(message)
-    {
-      data: { book_id: @book.id, tags: @book.tags.reload.map { |t| { id: t.id, name: t.name } } },
-      message: message
-    }
+  def tag_response
+    { data: BookSerializer.new(@book.reload).as_json }
   end
 end

@@ -13,13 +13,13 @@ RSpec.describe 'Auth', type: :request do
       it 'returns a token' do
         post '/auth/register', params: valid_params
         expect(response).to have_http_status(:created)
-        expect(json_response['token']).to be_present
+        expect(json_response['data']['token']).to be_present
       end
 
       it 'returns the user data' do
         post '/auth/register', params: valid_params
-        expect(json_response['user']['email']).to eq('test@example.com')
-        expect(json_response['user']).not_to have_key('password_digest')
+        expect(json_response['data']['user']['email']).to eq('test@example.com')
+        expect(json_response['data']['user']).not_to have_key('password_digest')
       end
     end
 
@@ -58,13 +58,13 @@ RSpec.describe 'Auth', type: :request do
       it 'returns a token' do
         post '/auth/login', params: { email: 'test@example.com', password: 'password123' }
         expect(response).to have_http_status(:ok)
-        expect(json_response['token']).to be_present
+        expect(json_response['data']['token']).to be_present
       end
 
       it 'returns the user data' do
         post '/auth/login', params: { email: 'test@example.com', password: 'password123' }
-        expect(json_response['user']['email']).to eq('test@example.com')
-        expect(json_response['user']['id']).to eq(user.id)
+        expect(json_response['data']['user']['email']).to eq('test@example.com')
+        expect(json_response['data']['user']['id']).to eq(user.id)
       end
     end
 

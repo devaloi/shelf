@@ -39,7 +39,7 @@ class BooksController < ApplicationController
     query = params[:q].to_s.strip
     return render_bad_request('Search query required') if query.blank?
 
-    books = current_user.books.includes(:tags).search(query)
+    books = BookSearchService.new(current_user.books.includes(:tags)).call(query)
     books, pagination = paginate(books)
 
     render json: {
