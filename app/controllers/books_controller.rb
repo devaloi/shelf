@@ -21,33 +21,23 @@ class BooksController < ApplicationController
   end
 
   def create
-    book = current_user.books.new(book_params)
-
-    if book.save
-      render json: { data: BookSerializer.new(book).as_json }, status: :created
-    else
-      render json: { error: 'Failed to create book', details: book.errors.full_messages },
-             status: :unprocessable_content
-    end
+    book = current_user.books.create!(book_params)
+    render json: { data: BookSerializer.new(book).as_json }, status: :created
   end
 
   def update
-    if @book.update(book_params)
-      render json: { data: BookSerializer.new(@book).as_json }
-    else
-      render json: { error: 'Failed to update book', details: @book.errors.full_messages },
-             status: :unprocessable_content
-    end
+    @book.update!(book_params)
+    render json: { data: BookSerializer.new(@book).as_json }
   end
 
   def destroy
-    @book.destroy
+    @book.destroy!
     head :no_content
   end
 
   def search
     query = params[:q].to_s.strip
-    return render json: { error: 'Search query required' }, status: :bad_request if query.blank?
+    return render_bad_request('Search query required') if query.blank?
 
     books = current_user.books.includes(:tags).search(query)
     books, pagination = paginate(books)
@@ -62,8 +52,6 @@ class BooksController < ApplicationController
 
   def set_book
     @book = current_user.books.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Book not found' }, status: :not_found
   end
 
   def book_params

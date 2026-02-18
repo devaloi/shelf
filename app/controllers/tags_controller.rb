@@ -21,7 +21,5 @@ class TagsController < ApplicationController
 
   def set_tag
     @tag = current_user.tags.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Tag not found' }, status: :not_found
   end
 end
