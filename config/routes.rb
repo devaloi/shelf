@@ -11,5 +11,13 @@ Rails.application.routes.draw do
     collection do
       get :search
     end
+    resources :tags, controller: 'book_tags', only: %i[create destroy]
+  end
+
+  # Tags
+  resources :tags, only: %i[index] do
+    member do
+      get :books
+    end
   end
 end
