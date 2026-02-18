@@ -195,6 +195,66 @@ RSpec.describe 'Books', type: :request do
     end
   end
 
+  describe 'GET /books/search' do
+    before do
+      create(:book, user: user, title: 'Ruby Programming', author: 'Matz')
+    end
+
+    it 'returns matching books' do
+      get '/books/search', params: { q: 'Ruby' }, headers: headers
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].length).to eq(1)
+    end
+
+    it 'returns 400 for empty query' do
+      get '/books/search', params: { q: '' }, headers: headers
+      expect(response).to have_http_status(:bad_request)
+      expect(json_response['error']).to eq('Search query required')
+    end
+
+    it 'returns 400 for missing query parameter' do
+      get '/books/search', headers: headers
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it 'includes pagination metadata' do
+      get '/books/search', params: { q: 'Ruby' }, headers: headers
+      expect(json_response['meta']).to include('page', 'total')
+    end
+  end
+
+  describe 'authentication edge cases' do
+    it 'returns 401 for expired token' do
+      expired_token = JWT.encode(
+        { user_id: user.id, exp: 1.hour.ago.to_i },
+        Rails.application.secret_key_base,
+        'HS256'
+      )
+      get '/books', headers: { 'Authorization' => "Bearer #{expired_token}" }
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.parsed_body['error']).to eq('Token has expired')
+    end
+
+    it 'returns 401 for invalid token' do
+      get '/books', headers: { 'Authorization' => 'Bearer invalid.token.here' }
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.parsed_body['error']).to include('Invalid token')
+    end
+
+    it 'returns 401 for missing token' do
+      get '/books'
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.parsed_body['error']).to eq('Missing authorization token')
+    end
+
+    it 'returns 401 for token with non-existent user' do
+      token = AuthService.encode(user_id: 99_999)
+      get '/books', headers: { 'Authorization' => "Bearer #{token}" }
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.parsed_body['error']).to eq('Invalid token')
+    end
+  end
+
   def json_response
     response.parsed_body
   end

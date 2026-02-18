@@ -1,3 +1,5 @@
+# Plain Ruby serializer — no gem dependency (ActiveModelSerializers, jbuilder).
+# Gives explicit control over JSON shape and avoids hidden serialization magic.
 class BookSerializer
   def initialize(book)
     @book = book

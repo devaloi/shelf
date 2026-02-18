@@ -1,3 +1,7 @@
+# Manual JWT authentication service — intentionally not using Devise
+# to demonstrate understanding of token-based auth mechanics.
+# Uses HS256 symmetric signing with Rails secret_key_base as the shared secret.
+# Tokens expire after 24 hours to balance security with usability.
 class AuthService
   ALGORITHM = 'HS256'.freeze
   TOKEN_EXPIRY = 24.hours

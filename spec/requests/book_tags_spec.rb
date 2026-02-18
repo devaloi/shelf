@@ -42,6 +42,12 @@ RSpec.describe 'BookTags', type: :request do
       expect(user.tags.last.name).to eq('ruby programming')
     end
 
+    it 'returns 400 for empty tags array' do
+      post "/books/#{book.id}/tags", params: { tags: [] }, headers: headers
+      expect(response).to have_http_status(:bad_request)
+      expect(json_response['error']).to eq('No tags provided')
+    end
+
     it 'cannot add tags to another user book' do
       other_book = create(:book, user: other_user)
       post "/books/#{other_book.id}/tags", params: { tags: ['hacked'] }, headers: headers

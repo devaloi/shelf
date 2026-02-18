@@ -9,6 +9,9 @@ class ApplicationController < ActionController::API
 
   private
 
+  # Token-based auth: extract JWT from Authorization header, decode it,
+  # and set current_user. All controllers inherit this before_action.
+  # Returns 401 with specific error messages for missing, expired, or invalid tokens.
   def authenticate_request
     token = extract_token
     return render_unauthorized('Missing authorization token') unless token

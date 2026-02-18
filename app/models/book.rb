@@ -13,6 +13,8 @@ class Book < ApplicationRecord
   scope :by_status, ->(status) { where(status: status) }
   scope :by_tag, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
   scope :recently_added, -> { order(created_at: :desc) }
+  # SQLite LIKE search — simple and dependency-free. Adequate for personal
+  # reading lists. For production scale, consider pg_search or Elasticsearch.
   scope :search, lambda { |query|
     where('title LIKE :q OR author LIKE :q OR notes LIKE :q', q: "%#{sanitize_sql_like(query)}%")
   }
