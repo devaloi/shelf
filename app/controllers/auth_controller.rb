@@ -6,7 +6,7 @@ class AuthController < ApplicationController
 
     if user.save
       token = AuthService.encode(user_id: user.id)
-      render json: { token: token, user: user_response(user) }, status: :created
+      render json: { token: token, user: UserSerializer.new(user).as_json }, status: :created
     else
       render json: { error: 'Registration failed', details: user.errors.full_messages }, status: :unprocessable_content
     end
@@ -17,7 +17,7 @@ class AuthController < ApplicationController
 
     if user&.authenticate(params[:password])
       token = AuthService.encode(user_id: user.id)
-      render json: { token: token, user: user_response(user) }
+      render json: { token: token, user: UserSerializer.new(user).as_json }
     else
       render json: { error: 'Invalid email or password' }, status: :unauthorized
     end
@@ -27,13 +27,5 @@ class AuthController < ApplicationController
 
   def user_params
     params.permit(:email, :password)
-  end
-
-  def user_response(user)
-    {
-      id: user.id,
-      email: user.email,
-      created_at: user.created_at
-    }
   end
 end

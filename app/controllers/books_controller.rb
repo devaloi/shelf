@@ -11,20 +11,20 @@ class BooksController < ApplicationController
     books, pagination = paginate(books)
 
     render json: {
-      data: books.map { |book| book_response(book) },
+      data: books.map { |book| BookSerializer.new(book).as_json },
       meta: pagination
     }
   end
 
   def show
-    render json: { data: book_response(@book) }
+    render json: { data: BookSerializer.new(@book).as_json }
   end
 
   def create
     book = current_user.books.new(book_params)
 
     if book.save
-      render json: { data: book_response(book) }, status: :created
+      render json: { data: BookSerializer.new(book).as_json }, status: :created
     else
       render json: { error: 'Failed to create book', details: book.errors.full_messages },
              status: :unprocessable_content
@@ -33,7 +33,7 @@ class BooksController < ApplicationController
 
   def update
     if @book.update(book_params)
-      render json: { data: book_response(@book) }
+      render json: { data: BookSerializer.new(@book).as_json }
     else
       render json: { error: 'Failed to update book', details: @book.errors.full_messages },
              status: :unprocessable_content
@@ -53,7 +53,7 @@ class BooksController < ApplicationController
     books, pagination = paginate(books)
 
     render json: {
-      data: books.map { |book| book_response(book) },
+      data: books.map { |book| BookSerializer.new(book).as_json },
       meta: pagination
     }
   end
@@ -98,14 +98,5 @@ class BooksController < ApplicationController
 
   def build_pagination(page, per_page, total)
     { page: page, per_page: per_page, total: total, total_pages: (total.to_f / per_page).ceil }
-  end
-
-  def book_response(book)
-    {
-      id: book.id, title: book.title, author: book.author, isbn: book.isbn,
-      status: book.status, rating: book.rating, notes: book.notes, url: book.url,
-      tags: book.tags.map { |tag| { id: tag.id, name: tag.name } },
-      created_at: book.created_at, updated_at: book.updated_at
-    }
   end
 end
