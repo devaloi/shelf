@@ -17,8 +17,9 @@
 /doc/
 /script/
 
-# Ignore all environment files.
+# Ignore all environment files (but keep .env.example).
 /.env*
+!/.env.example
 
 # Ignore all logfiles and tempfiles.
 /log/*

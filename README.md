@@ -1,5 +1,10 @@
 # shelf
 
+[![CI](https://github.com/devaloi/shelf/actions/workflows/ci.yml/badge.svg)](https://github.com/devaloi/shelf/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Ruby](https://img.shields.io/badge/Ruby-3.4-red.svg)](https://www.ruby-lang.org/)
+[![Rails](https://img.shields.io/badge/Rails-8.1-red.svg)](https://rubyonrails.org/)
+
 A clean REST API for managing a personal reading list with tags, search, and JWT authentication — built with Rails API mode.
 
 ## Tech Stack
@@ -93,8 +98,10 @@ curl -X POST http://localhost:3000/auth/register \
 Response `201 Created`:
 ```json
 {
-  "token": "eyJhbGciOi...",
-  "user": { "id": 1, "email": "user@example.com", "created_at": "2025-01-01T00:00:00Z" }
+  "data": {
+    "token": "eyJhbGciOi...",
+    "user": { "id": 1, "email": "user@example.com", "created_at": "2025-01-01T00:00:00Z" }
+  }
 }
 ```
 
@@ -109,8 +116,10 @@ curl -X POST http://localhost:3000/auth/login \
 Response `200 OK`:
 ```json
 {
-  "token": "eyJhbGciOi...",
-  "user": { "id": 1, "email": "user@example.com", "created_at": "2025-01-01T00:00:00Z" }
+  "data": {
+    "token": "eyJhbGciOi...",
+    "user": { "id": 1, "email": "user@example.com", "created_at": "2025-01-01T00:00:00Z" }
+  }
 }
 ```
 
@@ -167,6 +176,25 @@ Response `200 OK`:
 ```bash
 curl http://localhost:3000/books/1 \
   -H "Authorization: Bearer $TOKEN"
+```
+
+Response `200 OK`:
+```json
+{
+  "data": {
+    "id": 1,
+    "title": "The Pragmatic Programmer",
+    "author": "David Thomas",
+    "isbn": null,
+    "status": "reading",
+    "rating": 5,
+    "notes": "Essential reading",
+    "url": null,
+    "tags": [{ "id": 1, "name": "programming" }],
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-01-01T00:00:00Z"
+  }
+}
 ```
 
 #### Create Book
@@ -266,6 +294,26 @@ curl -X DELETE http://localhost:3000/books/1/tags/2 \
 
 ---
 
+### Error Responses
+
+All errors follow a consistent format:
+
+```json
+// Validation error (422)
+{ "error": "Validation failed", "details": ["Title can't be blank"] }
+
+// Authentication error (401)
+{ "error": "Token has expired" }
+
+// Not found (404)
+{ "error": "Book not found" }
+
+// Bad request (400)
+{ "error": "Search query required" }
+```
+
+---
+
 ## Architecture
 
 ```
@@ -282,7 +330,8 @@ app/
 │   ├── tag.rb          # Name normalization, uniqueness per user
 │   └── book_tag.rb     # Join table
 ├── services/
-│   └── auth_service.rb             # JWT encode/decode
+│   ├── auth_service.rb              # JWT encode/decode
+│   └── book_search_service.rb       # Search query builder
 └── serializers/
     ├── book_serializer.rb
     ├── tag_serializer.rb
@@ -312,7 +361,7 @@ book_tags: book_id, tag_id (join table)
 bundle exec rspec
 ```
 
-95 examples covering:
+111 examples covering:
 - **Model specs** — validations, associations, scopes, custom methods
 - **Request specs** — every endpoint with happy path and error cases
 - **Service specs** — JWT encoding, decoding, expiration, invalid tokens
