@@ -1,6 +1,5 @@
 # shelf
 
-[![CI](https://github.com/devaloi/shelf/actions/workflows/ci.yml/badge.svg)](https://github.com/devaloi/shelf/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Ruby](https://img.shields.io/badge/Ruby-3.4-red.svg)](https://www.ruby-lang.org/)
 [![Rails](https://img.shields.io/badge/Rails-8.1-red.svg)](https://rubyonrails.org/)
