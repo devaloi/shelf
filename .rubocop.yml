@@ -11,6 +11,13 @@ AllCops:
     - 'db/schema.rb'
     - 'vendor/**/*'
     - 'node_modules/**/*'
+    - 'gems/**/*'
+    - 'specifications/**/*'
+    - 'plugins/**/*'
+    - 'extensions/**/*'
+    - 'cache/**/*'
+    - 'build_info/**/*'
+    - 'doc/**/*'
 
 Style/Documentation:
   Enabled: false

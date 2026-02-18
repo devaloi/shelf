@@ -7,6 +7,16 @@
 # Ignore bundler config.
 /.bundle
 
+# Ignore installed gems
+/gems/
+/specifications/
+/plugins/
+/extensions/
+/cache/
+/build_info/
+/doc/
+/script/
+
 # Ignore all environment files.
 /.env*
 
