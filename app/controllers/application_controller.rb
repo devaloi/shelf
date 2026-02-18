@@ -25,7 +25,10 @@ class ApplicationController < ActionController::API
     header = request.headers['Authorization']
     return nil unless header
 
-    header.split.last
+    parts = header.split(' ')
+    return nil unless parts.length == 2 && parts.first.downcase == 'bearer'
+
+    parts.last
   end
 
   def render_not_found(exception)

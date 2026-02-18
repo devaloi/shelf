@@ -4,7 +4,7 @@
 # Tokens expire after 24 hours to balance security with usability.
 class AuthService
   ALGORITHM = 'HS256'.freeze
-  TOKEN_EXPIRY = 24.hours
+  TOKEN_EXPIRY = TOKEN_EXPIRY_HOURS.hours
 
   class << self
     def encode(payload)

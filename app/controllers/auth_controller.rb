@@ -12,6 +12,8 @@ class AuthController < ApplicationController
     end
   end
 
+  # Authenticate: look up user by email (case-insensitive), verify password
+  # via bcrypt's authenticate method, and return a signed JWT on success.
   def login
     user = User.find_by(email: params[:email]&.downcase)
 

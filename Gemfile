@@ -4,6 +4,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'bootsnap', require: false
 gem 'jwt', '~> 2.7'
 gem 'puma', '>= 5.0'
+gem 'rack-cors', '~> 2.0'
 gem 'rails', '~> 8.1.2'
 gem 'sqlite3', '>= 2.1'
 gem 'tzinfo-data', platforms: %i[windows jruby]

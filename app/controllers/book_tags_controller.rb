@@ -27,6 +27,8 @@ class BookTagsController < ApplicationController
     Array(params[:tags]).map { |t| t.to_s.strip }.compact_blank
   end
 
+  # Uses filter_map to find-or-create each tag then associate it with the book.
+  # Skips (returns nil via next) tags already on the book; filter_map discards nils.
   def add_tags_to_book(tag_names)
     tag_names.filter_map do |name|
       tag = current_user.tags.find_or_create_by!(name: name)

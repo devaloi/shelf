@@ -1,8 +1,7 @@
 class BooksController < ApplicationController
-  before_action :set_book, only: %i[show update destroy]
+  include Paginatable
 
-  DEFAULT_PER_PAGE = 20
-  MAX_PER_PAGE = 100
+  before_action :set_book, only: %i[show update destroy]
 
   def index
     books = current_user.books.includes(:tags)
@@ -64,27 +63,11 @@ class BooksController < ApplicationController
     books
   end
 
+  # Validates sort params against an allowlist using presence_in(),
+  # which returns nil if the value isn't in the array — falling back to defaults.
   def apply_sorting(books)
     sort_field = params[:sort].presence_in(%w[title author created_at rating]) || 'created_at'
     sort_order = params[:order].presence_in(%w[asc desc]) || 'desc'
     books.order(sort_field => sort_order)
-  end
-
-  def paginate(books)
-    page = [params[:page].to_i, 1].max
-    per_page = parse_per_page
-    total = books.count
-
-    [books.offset((page - 1) * per_page).limit(per_page), build_pagination(page, per_page, total)]
-  end
-
-  def parse_per_page
-    return DEFAULT_PER_PAGE if params[:per_page].blank?
-
-    params[:per_page].to_i.clamp(1, MAX_PER_PAGE)
-  end
-
-  def build_pagination(page, per_page, total)
-    { page: page, per_page: per_page, total: total, total_pages: (total.to_f / per_page).ceil }
   end
 end
