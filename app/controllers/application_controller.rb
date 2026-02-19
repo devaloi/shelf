@@ -25,7 +25,7 @@ class ApplicationController < ActionController::API
     header = request.headers['Authorization']
     return nil unless header
 
-    parts = header.split(' ')
+    parts = header.split
     return nil unless parts.length == 2 && parts.first.downcase == 'bearer'
 
     parts.last
