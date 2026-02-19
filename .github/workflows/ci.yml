@@ -20,7 +20,7 @@ jobs:
           bundler-cache: true
 
       - name: Set up database
-        run: bundle exec rails db:setup
+        run: bundle exec rails db:create db:schema:load
         env:
           RAILS_ENV: test
 
